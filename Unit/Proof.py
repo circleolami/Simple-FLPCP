@@ -1,15 +1,12 @@
 from typing import List
 
-from gmpy2 import mpfr, mpz, round_away
-
 from Unit.Integer import Integer
 from Unit.Query import Query
-from Utils.Constant import base
 
 
 class Proof:
 
-    def __init__(self, proof: List):
+    def __init__(self, proof: List[Integer]):
         self.proof = proof
 
     def __repr__(self) -> str:
@@ -18,11 +15,17 @@ class Proof:
     def __mul__(self, other: Query) -> Integer:
         assert len(self.proof) == len(other.query)
 
-        res = mpfr(0.0, base)
+        res = Integer(0)
         for i in range(len(self.proof)):
             res += self.proof[i] * other.query[i]
 
-        return Integer(mpz(round_away(res)))
+        return res
 
-    def get_length(self) -> int:
+    def get_size(self) -> int:
         return len(self.proof)
+
+    def get_byte_size(self) -> int:
+        total_bytes = 0
+        for p in self.proof:
+            total_bytes += p.get_size()
+        return total_bytes

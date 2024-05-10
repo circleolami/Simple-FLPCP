@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 gmpy2 = "*"
+matplotlib = "*"
 
 [dev-packages]
 

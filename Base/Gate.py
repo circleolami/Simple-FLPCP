@@ -5,6 +5,9 @@ from Unit.Operand import Operand
 
 
 class Gate(metaclass=ABCMeta):
+    """
+    Base class for all gates.
+    """
 
     @abstractmethod
     def __call__(self, *args, **kwargs):

@@ -1,11 +1,14 @@
 from typing import List
 
-from Circuit import Gate
-from Circuit.GGate import GGate
+from Base import Gate
+from Base.GGate import GGate
 from Unit.Operand import Operand
 
 
-class MyGGate(GGate):
+class InnerProductGGate(GGate):
+    """
+    Perform inner product of two n-dim vector
+    """
 
     def __init__(self, dim: int):
         assert dim > 1

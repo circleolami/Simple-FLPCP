@@ -1,19 +1,26 @@
 from __future__ import annotations
 
 import copy
-from typing import List, Union
+from typing import List, TYPE_CHECKING
 
-from gmpy2 import mpfr, mpz
+from operator import add
 
 from Unit.Integer import Integer
 from Unit.Operand import Operand
-from Utils.Constant import base
+
+if TYPE_CHECKING:
+    from Base.GGate import GGate
 
 
 class Query(Operand):
+    g_gate_ref = []
+    coefficient_size = 0
 
     def __init__(self, query: List[Integer]):
         self.query = query
+
+    def __repr__(self) -> str:
+        return f'Query({self.query})'
 
     def __add__(self, other: Query) -> Query:
         assert len(self.query) == len(other.query)
@@ -24,37 +31,60 @@ class Query(Operand):
 
         return Query(res)
 
-    def __mul__(self, other: Union[Integer, mpfr, Query]) -> Query:
-        if isinstance(other, Integer):
-            res = self.query[:]
-            for i in range(len(self.query)):
-                res[i] *= other
+    def __sub__(self, other: Query) -> Query:
+        assert len(self.query) == len(other.query)
 
-            return Query(res)
-        elif isinstance(other, mpfr):
-            res = self.query[:]
-            for i in range(len(self.query)):
-                res[i] *= other
+        res = self.query[:]
+        for i in range(len(self.query)):
+            res[i] -= other.query[i]
 
-            return Query(res)
-        elif isinstance(other, Query):
-            return Query(self.query[:])
-        else:
-            assert False
+        return Query(res)
+
+    def __mul__(self, other: Integer) -> Query:
+        res = self.query[:]
+        for i in range(len(self.query)):
+            res[i] *= other
+
+        return Query(res)
 
     @staticmethod
-    def interpolate(points: List[Query], r: Integer) -> Query:
-        assert r.n >= mpz(len(points)) and len(points) > 0  # For HVZK
-
-        result = Query([Integer(0) for _ in range(points[0].get_size())])
+    def new_interpolate(points: List[Query], r: Integer) -> Query:
+        result = [Integer(0) for _ in range(points[0].get_size())]
         for i in range(len(points)):
-            term: Query = copy.deepcopy(points[i])
+            term = copy.deepcopy(points[i])
             for j in range(len(points)):
-                if i != j:
-                    term = term * (mpfr((r + Integer(-j)).n, base) / mpfr(i - j, base))
-            result = result + term
+                if i == j:
+                    continue
+                for k in range(len(term.query)):
+                    term.query[k] *= (r + Integer(-j)) * Integer(i - j).invert()
+            result = list(map(add, result, term.query))
 
-        return result
+        return Query(result)
+
+    @staticmethod
+    def interpolate(y_values: List[Query], r: Integer):
+        n = len(y_values)
+
+        divided_diff = [[Query([Integer(0) for _ in range(y_values[0].get_size())]) for _ in range(n)] for _ in range(n)]
+        for i in range(n):
+            divided_diff[i][0] = y_values[i]
+
+        for j in range(1, n):
+            for i in range(n - j):
+                divided_diff[i][j] = (divided_diff[i + 1][j - 1] - divided_diff[i][j - 1]) * Integer(j).invert()
+
+        coefficients = []
+        for i in range(n):
+            coefficients.append(divided_diff[0][i])
+
+        polynomial_value = Query([Integer(0) for _ in range(y_values[0].get_size())])
+        product_term = Integer(1)
+        for i in range(n):
+            polynomial_value += coefficients[i] * product_term
+            product_term *= (r - Integer(i))
+
+        return polynomial_value
+
 
     def get_size(self):
         return len(self.query)

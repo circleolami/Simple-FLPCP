@@ -1,0 +1,98 @@
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 4)
+Accepted!
+Verifier elapsed time(ms):  1.002
+Prover elapsed time(ms):  0.9990000000000001
+Proof length:  1864
+Query complexity:  10
+Soundness error:  1.1754943508222875e-38
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 16)
+Accepted!
+Verifier elapsed time(ms):  0.9990000000000001
+Prover elapsed time(ms):  3.001
+Proof length:  2664
+Query complexity:  16
+Soundness error:  2.350988701644575e-38
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 64)
+Accepted!
+Verifier elapsed time(ms):  1.0
+Prover elapsed time(ms):  12.006000000000002
+Proof length:  3384
+Query complexity:  22
+Soundness error:  3.0386088166851723e-38
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 256)
+Accepted!
+Verifier elapsed time(ms):  1.002
+Prover elapsed time(ms):  49.50300000000001
+Proof length:  4104
+Query complexity:  28
+Soundness error:  3.5264830524668625e-38
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 1024)
+Accepted!
+Verifier elapsed time(ms):  1.0
+Prover elapsed time(ms):  214.32399999999998
+Proof length:  4824
+Query complexity:  34
+Soundness error:  3.9049077093779381e-38
+-------------------------------------------
+[0.9990000000000001, 3.001, 12.006000000000002, 49.50300000000001, 214.32399999999998]
+[1.002, 0.9990000000000001, 1.0, 1.002, 1.0]
+[1864, 2664, 3384, 4104, 4824]
+[10, 16, 22, 28, 34]
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 4)
+Accepted!
+Verifier elapsed time(ms):  2.9979999999999998
+Prover elapsed time(ms):  1.42
+Proof length:  29
+Query complexity:  10
+Soundness error:  5.8774717541114375e-38
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 16)
+Accepted!
+Verifier elapsed time(ms):  43.511
+Prover elapsed time(ms):  3.999
+Proof length:  89
+Query complexity:  18
+Soundness error:  1.1754943508222875e-37
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 64)
+Accepted!
+Verifier elapsed time(ms):  1450.685
+Prover elapsed time(ms):  22.997
+Proof length:  305
+Query complexity:  34
+Soundness error:  2.350988701644575e-37
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 256)
+Accepted!
+Verifier elapsed time(ms):  36524.47
+Prover elapsed time(ms):  205.525
+Proof length:  1121
+Query complexity:  66
+Soundness error:  4.70197740328915e-37
+-------------------------------------------
+-------------------------------------------
+Circuit: perform inner product of two 2-dim vector (x 1024)
+Accepted!
+Verifier elapsed time(ms):  1166796.3050000002
+Prover elapsed time(ms):  2293.33
+Proof length:  4289
+Query complexity:  130
+Soundness error:  9.4039548065783001e-37
+-------------------------------------------
+[1.42, 3.999, 22.997, 205.525, 2293.33]
+[2.9979999999999998, 43.511, 1450.685, 36524.47, 1166796.3050000002]
+[1952, 4880, 15936, 56440, 211200]
+[10, 18, 34, 66, 130]
