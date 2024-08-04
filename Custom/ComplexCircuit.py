@@ -1,25 +1,23 @@
 from typing import List
-
 from Base.Circuit import Circuit
-from Base.Gate import Add, CMul
 from Custom.InnerProductGGate import InnerProductGGate
-from Unit.Integer import Integer
 from Unit.Operand import Operand
-
+from Unit.Integer import Integer
 
 class ComplexCircuit(Circuit):
     """
-    Consist of many inner product G-gate
+    Define a circuit composed of multiple inner product G-gates
     """
 
     def __init__(self, dim: int):
+        degrees = compute_degrees(dim)  # Calculate the optimal degrees for the given dimension using dynamic programming
+        # Pass the degrees value when creating InnerProductGGate
         super().__init__(
-            [Add() for _ in range(4 * dim * dim)],
-            [CMul(Integer(i)) for i in range(4 * dim * dim)],
-            [InnerProductGGate(dim) for _ in range(2 * dim + 1)]
+            [], [], [InnerProductGGate(dim, degrees) for _ in range(2 * dim + 1)]
         )
         self.dim = dim
 
+    # Execute the circuit for the input vector
     def __call__(self, input: List[Operand]):
         assert len(input) == 8 * self.dim * self.dim
 

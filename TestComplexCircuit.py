@@ -15,7 +15,7 @@ if __name__ == '__main__':
     dim = 3
     print(f'Circuit: perform complex {dim}-dim vector arithmetic calculation')
 
-    # Choose base probable prime number greater than 2 ** 127
+    # Choose base probable prime number greater than 2 ** 127 
     Integer.set_prime(mpz(2) ** 127)
     print('Base (probable) prime number: ', Integer.get_base())
 
