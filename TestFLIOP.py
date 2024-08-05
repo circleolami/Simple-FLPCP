@@ -4,19 +4,23 @@ from Base.ParallelSumRootM import ParallelSumRootM
 from Custom.InnerProductGGate import InnerProductGGate
 from Unit.Integer import Integer
 
-# Function to compute optimal degrees
+# Improved function to compute optimal degrees
 def compute_degrees(n: int):
     dp = [0] * (n + 1)
     degrees = [0] * n
 
-    # Dynamic Programming to calculate optimal degrees
+    # Initialize the dp array
     for i in range(1, n + 1):
-        dp[i] = float('inf')
-        for j in range(1, i + 1):
-            cost = dp[i // j] + j
-            if cost < dp[i]:
-                dp[i] = cost
-                degrees[i - 1] = j
+        dp[i] = i
+        degrees[i - 1] = 1
+
+    # Dynamic Programming to calculate optimal degrees
+    for i in range(2, n + 1):
+        for j in range(1, i):
+            if i % j == 0:
+                if dp[i // j] + 1 < dp[i]:
+                    dp[i] = dp[i // j] + 1
+                    degrees[i - 1] = j
 
     return degrees
 
@@ -27,9 +31,11 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
 
     # Generate input vector
     input_vec = [Integer(i) for i in range(dim * 2 * circuit_count)]
+    print("Input Vector:", input_vec)
 
     # Compute optimal degrees
     degrees = compute_degrees(dim)
+    print("Computed Degrees:", degrees)
 
     # Create instances of InnerProductGGate using the optimal degrees
     my_circuit = ParallelSumRootM([InnerProductGGate(dim=dim, degrees=degrees) for _ in range(circuit_count)])
@@ -43,6 +49,10 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
     proof = my_circuit.make_proof(input_vec)
     end = datetime.now()
     prover_time += (end - start).total_seconds()
+    # print("Proof Vector:", proof)
+
+    # Calculate proof length in bytes
+    proof_length = proof.get_byte_size()
 
     # Measure the time taken by the verifier to generate queries
     start = datetime.now()
@@ -50,6 +60,10 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
     queries = my_circuit.make_queries(proof.get_size(), r)
     end = datetime.now()
     verifier_time += (end - start).total_seconds()
+    # print("Queries:", queries)
+
+    # Calculate query complexity
+    query_complexity = len(queries)
 
     # Measure the time taken to compute the inner product of proof vector and query vector
     start = datetime.now()
@@ -58,6 +72,7 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
         validation.append(proof * queries[i])
     end = datetime.now()
     prover_time += (end - start).total_seconds()
+    print("Validation Results:", validation)
 
     # Measure the time taken by the verifier to perform the final verification
     start = datetime.now()
@@ -81,8 +96,8 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
         print('Accepted!' if is_accepted else 'Rejected!')
         print('Verifier elapsed time(ms): ', verifier_time * 1000)
         print('Prover elapsed time(ms): ', prover_time * 1000)
-        print('Proof length: ', proof.get_size())
-        print('Query complexity: ', len(queries))
+        print('Proof length (bytes): ', proof_length)
+        print('Query complexity: ', query_complexity)
         print('Soundness error: ', (proof.get_size() - 1 - len(input_vec) - my_circuit.get_g_gates_count()) / (
                     Integer.get_base() - my_circuit.get_g_gates_count()))
         print('-------------------------------------------')
@@ -90,7 +105,7 @@ def test_fliop(dim: int, circuit_count: int, verbose: bool = True):
     # Assert that the verification result is correct
     assert is_accepted
 
-    return is_accepted, verifier_time * 1000, prover_time * 1000, proof.get_byte_size(), len(queries)
+    return is_accepted, verifier_time * 1000, prover_time * 1000, proof_length, query_complexity
 
 if __name__ == '__main__':
     print('/-----------------------------------------\\')
@@ -100,4 +115,4 @@ if __name__ == '__main__':
     print('')
 
     # Perform test with example parameters
-    test_fliop(dim=3, circuit_count=64)
+    test_fliop(dim=2, circuit_count=4)
